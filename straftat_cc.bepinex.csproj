@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>Straftat_lx.BepInEx</AssemblyName>
+    <RootNamespace>STRAFTAT_CC</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+    <!-- Override these when building against a specific Mac game install. -->
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildThisFileDirectory)..</GameDir>
+    <BepInExCoreDir Condition="'$(BepInExCoreDir)' == ''">$(GameDir)/BepInEx/core</BepInExCoreDir>
+    <UnityManagedDir Condition="'$(UnityManagedDir)' == ''">$(GameDir)/STRAFTAT.app/Contents/Resources/Data/Managed</UnityManagedDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Mac/BepInExPlugin.cs" />
+    <ProjectReference Include="straftat_cc.csproj" Condition="'$(UseMacGameReferences)' != 'true'" />
+    <ProjectReference Include="straftat_cc.mac.csproj" Condition="'$(UseMacGameReferences)' == 'true'" />
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExCoreDir)/BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(UnityManagedDir)/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(UnityManagedDir)/UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="RequireMacLoaderDependencies" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(BepInExCoreDir)/BepInEx.dll')"
+           Text="BepInEx.dll was not found. Set GameDir to the Straftat install directory or set BepInExCoreDir explicitly." />
+    <Error Condition="!Exists('$(UnityManagedDir)/UnityEngine.dll')"
+           Text="UnityEngine.dll was not found. Set UnityManagedDir to the Mac game's Data/Managed directory." />
+    <Error Condition="!Exists('$(UnityManagedDir)/UnityEngine.CoreModule.dll')"
+           Text="UnityEngine.CoreModule.dll was not found. Set UnityManagedDir to the Mac game's Data/Managed directory." />
+  </Target>
+</Project>

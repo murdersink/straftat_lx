@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>STRAFTAT_CC</RootNamespace>
+    <AssemblyName>Straftat_lx</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildThisFileDirectory)..</GameDir>
+    <GameManagedDir Condition="'$(GameManagedDir)' == ''">$(GameDir)/STRAFTAT.app/Contents/Resources/Data/Managed</GameManagedDir>
+    <OutputPath>bin/Release/</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Cache.cs" />
+    <Compile Include="Cheat.cs" />
+    <Compile Include="Entities.cs" />
+    <Compile Include="Features/Aimbot.cs" />
+    <Compile Include="Features/ESP.cs" />
+    <Compile Include="Features/LegitBot.cs" />
+    <Compile Include="Features/PlayerMods.cs" />
+    <Compile Include="Features/TestEntity.cs" />
+    <Compile Include="Features/WeaponMods.cs" />
+    <Compile Include="Features/Misc.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="PlatformInterop.cs" />
+    <Compile Include="Properties/AssemblyInfo.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Utils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <GameManagedAssembly Include="$(GameManagedDir)/*.dll"
+                         Exclude="$(GameManagedDir)/mscorlib.dll;$(GameManagedDir)/netstandard.dll;$(GameManagedDir)/System*.dll" />
+    <Reference Include="@(GameManagedAssembly)">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony, Version=2.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages/Lib.Harmony.2.3.4/lib/net48/0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="ImGui.NET, Version=1.91.6.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages/ImGui.NET.1.91.6.1/lib/netstandard2.0/ImGui.NET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="RequireMacGameReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(GameManagedDir)/Assembly-CSharp.dll')"
+           Text="Mac game Assembly-CSharp.dll was not found. Set GameDir or GameManagedDir." />
+    <Error Condition="!Exists('$(GameManagedDir)/UnityEngine.CoreModule.dll')"
+           Text="Mac game UnityEngine.CoreModule.dll was not found. Set GameDir or GameManagedDir." />
+  </Target>
+</Project>
